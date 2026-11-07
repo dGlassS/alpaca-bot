@@ -1,0 +1,15 @@
+[Unit]
+Description=Bot de trading Alpaca (Paper)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=alpacabot
+WorkingDirectory=/opt/alpaca-bot
+EnvironmentFile=/etc/alpaca-bot.env
+ExecStart=/opt/alpaca-bot/.venv/bin/python -m bot.main
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
