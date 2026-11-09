@@ -152,7 +152,7 @@ class Bot:
                 continue
             cid = f"{self.s.order_prefix}{now:%Y%m%d}-{sym}-{int(round(plan.max_loss * 100))}"
             order = self.trading.submit_order(MarketOrderRequest(
-                symbol=sym, qty=plan.qty, side=OrderSide.BUY, time_in_force=TimeInForce.DAY,
+                symbol=sym, qty=plan.qty, side=OrderSide.BUY, time_in_force=TimeInForce.GTC,
                 order_class=OrderClass.BRACKET, client_order_id=cid,
                 take_profit=TakeProfitRequest(limit_price=plan.target),
                 stop_loss=StopLossRequest(stop_price=plan.stop)))

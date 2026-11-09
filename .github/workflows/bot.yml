@@ -2,7 +2,7 @@ name: Bot de trading (Paper)
 
 on:
   schedule:
-    - cron: "*/30 13-20 * * 1-5"   # pendant la séance de New York (heure UTC)
+    - cron: "7,22,37,52 13-20 * * 1-5"   # pendant la séance de New York (heure UTC), hors des heures pleines
     - cron: "15 22 * * 5"          # rapport du vendredi, après la clôture
   workflow_dispatch:
     inputs:
@@ -11,6 +11,9 @@ on:
         type: choice
         options: [bot, rapport]
         default: bot
+      minutes:
+        description: "durée en minutes (max 340)"
+        default: "60"
 
 permissions:
   contents: write
@@ -22,7 +25,7 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 75
+    timeout-minutes: 355
     env:
       ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
       ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
@@ -51,7 +54,7 @@ jobs:
       - name: Faire tourner le bot (1 heure)
         if: env.IS_REPORT != 'true'
         env:
-          BOT_MAX_MINUTES: "60"
+          BOT_MAX_MINUTES: ${{ inputs.minutes || '60' }}
         run: python -m bot.main
 
       - name: Rapport de la semaine
