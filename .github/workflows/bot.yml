@@ -30,8 +30,8 @@ jobs:
       BOT_REPORT_DIR: jr/reports
       IS_REPORT: ${{ github.event.schedule == '15 22 * * 5' || inputs.task == 'rapport' }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
           cache: pip
