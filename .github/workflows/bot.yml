@@ -4,6 +4,8 @@ on:
   schedule:
     - cron: "7,22,37,52 13-20 * * 1-5"   # pendant la séance de New York (heure UTC), hors des heures pleines
     - cron: "15 22 * * 5"          # rapport du vendredi, après la clôture
+  push:
+    branches: [run]                  # un push sur la branche run lance une séance complète
   workflow_dispatch:
     inputs:
       task:
@@ -54,7 +56,7 @@ jobs:
       - name: Faire tourner le bot (1 heure)
         if: env.IS_REPORT != 'true'
         env:
-          BOT_MAX_MINUTES: ${{ inputs.minutes || '60' }}
+          BOT_MAX_MINUTES: ${{ inputs.minutes || (github.event_name == 'push' && '340') || '60' }}
         run: python -m bot.main
 
       - name: Rapport de la semaine
