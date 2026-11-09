@@ -39,6 +39,7 @@ class Bot:
         self._flattened_for = None
         self._stopped_logged = False
         self._seen_open = False
+        self._leftovers_checked_for = None
 
     # ---------- journal ----------
     def record(self, event: str, **data):
@@ -76,12 +77,35 @@ class Bot:
             log.exception("lecture des watchlists impossible")
             return False
 
-    def flatten(self, why: str):
+    def _open_orders(self):
+        return self.trading.get_orders(GetOrdersRequest(status=QueryOrderStatus.OPEN))
+
+    def flatten(self, why: str) -> bool:
+        """Annule les ordres, vend toutes les positions et VÉRIFIE qu'il n'en reste aucune."""
         positions = self.trading.get_all_positions()
-        open_orders = self.trading.get_orders(GetOrdersRequest(status=QueryOrderStatus.OPEN))
-        if positions or open_orders:
-            self.trading.close_all_positions(cancel_orders=True)
-            self.record("flatten", reason=why, positions=[p.symbol for p in positions])
+        if not positions and not self._open_orders():
+            return True
+        # 1. Annuler stop/objectif d'abord : tant qu'ils existent, les actions sont « réservées ».
+        self.trading.cancel_orders()
+        for _ in range(15):
+            if not self._open_orders():
+                break
+            _time.sleep(1)
+        # 2. Vendre chaque position au marché.
+        for p in self.trading.get_all_positions():
+            try:
+                self.trading.close_position(p.symbol)
+            except Exception as e:
+                self.record("flatten_erreur", symbol=p.symbol, erreur=str(e))
+        # 3. Vérifier.
+        left = []
+        for _ in range(10):
+            _time.sleep(2)
+            left = [p.symbol for p in self.trading.get_all_positions()]
+            if not left:
+                break
+        self.record("flatten", reason=why, positions=[p.symbol for p in positions], restantes=left)
+        return not left
 
     def bars(self, symbols, start: datetime) -> dict:
         req = StockBarsRequest(symbol_or_symbols=list(symbols), timeframe=TimeFrame.Minute,
@@ -117,9 +141,15 @@ class Bot:
             return self.s.poll_seconds
         self._stopped_logged = False
 
+        # Positions restées de la veille (fermeture ratée) : on les vend dès l'ouverture.
+        if self._leftovers_checked_for != now.date():
+            if self.trading.get_all_positions() and not self.day_state(session_open).trades_today:
+                self.flatten("positions de la veille")
+            self._leftovers_checked_for = now.date()
+
         if now >= flatten_at:
-            if self._flattened_for != now.date():
-                self.flatten("fin de séance")
+            # On réessaie à chaque tour tant que tout n'est pas fermé.
+            if self._flattened_for != now.date() and self.flatten("fin de séance"):
                 self._flattened_for = now.date()
             return self.s.poll_seconds
 
