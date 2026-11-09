@@ -165,20 +165,29 @@ class Bot:
                 break
         return self.s.poll_seconds
 
-    def run(self):
+    def run(self, max_minutes: float = 0):
+        """Tourne en boucle. Avec max_minutes > 0, s'arrête après ce temps (GitHub Actions)."""
+        deadline = _time.monotonic() + max_minutes * 60 if max_minutes > 0 else None
+        if deadline is not None:
+            clock = self.trading.get_clock()
+            if not clock.is_open and clock.next_open - clock.timestamp > timedelta(minutes=max_minutes):
+                log.info("marché fermé jusqu'à %s : rien à faire pour ce créneau", clock.next_open)
+                return
         self.record("demarrage", mode="paper", watchlist=list(self.s.strategy.watchlist))
-        while True:
+        while deadline is None or _time.monotonic() < deadline:
             try:
                 wait = self.tick()
             except Exception:
                 log.exception("erreur pendant le tour de boucle")
                 wait = 60
+            if deadline is not None:
+                wait = min(wait, max(0, deadline - _time.monotonic()))
             _time.sleep(wait)
 
 
 def main():
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-    Bot(Settings()).run()
+    Bot(Settings()).run(max_minutes=float(os.environ.get("BOT_MAX_MINUTES", "0")))
 
 
 if __name__ == "__main__":

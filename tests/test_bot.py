@@ -68,3 +68,19 @@ def test_risk_blocks():
     assert not check_entry(_ok_plan(), DayState(symbols_today={"AAPL"}), lim, time(10), time(15, 30), 1e5, 1e5).ok
     low_rr = Plan("AAPL", 40, 101.5, 100.25, 102.0)
     assert not check_entry(low_rr, DayState(), lim, time(10), time(15, 30), 1e5, 1e5).ok
+
+
+def test_report_pairs_entries_and_exits():
+    from bot.report import Fill, build_trades, summarize
+    t0 = datetime(2026, 11, 9, 10, 0, tzinfo=NY)
+    fills = [
+        Fill("AAPL", "buy", 40, 101.5, t0, "entree"),
+        Fill("AAPL", "sell", 40, 104.0, t0 + timedelta(hours=1), "objectif"),
+        Fill("TSLA", "buy", 10, 300.0, t0, "entree"),
+        Fill("TSLA", "sell", 10, 296.0, t0 + timedelta(hours=2), "stop"),
+        Fill("MSFT", "sell", 5, 400.0, t0, "fermeture"),  # pas une entrée du bot : ignoré
+    ]
+    trades = build_trades(fills)
+    assert [(t.symbol, t.pnl, t.exit_kind) for t in trades] == [("AAPL", 100.0, "objectif"), ("TSLA", -40.0, "stop")]
+    s = summarize(trades)
+    assert s["pnl_total"] == 60.0 and s["taux_reussite"] == 50.0

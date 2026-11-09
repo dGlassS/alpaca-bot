@@ -34,7 +34,17 @@ Tout est dans `bot/config.py`.
 - **Depuis le serveur** : `sudo touch /opt/alpaca-bot/STOP` (et `sudo rm /opt/alpaca-bot/STOP` pour relancer),
   ou `sudo systemctl stop alpaca-bot`.
 
-## Installation sur le serveur (Ubuntu 24.04)
+## Mode gratuit : GitHub Actions (utilisé actuellement)
+
+`.github/workflows/bot.yml` lance le bot toutes les 30 minutes pendant la séance de New York,
+par tranches d'une heure (une seule à la fois). L'état du jour est relu depuis Alpaca à chaque démarrage.
+Le journal et les rapports sont sauvegardés sur la branche `journal`.
+Le rapport de la semaine est créé le vendredi après la clôture (`reports/AAAA-MM-JJ.md`).
+
+Il faut deux secrets dans Settings → Secrets and variables → Actions : `ALPACA_API_KEY` et `ALPACA_SECRET_KEY` (clés **Paper**).
+Pour tout arrêter : Actions → « Bot de trading (Paper) » → « ⋯ » → **Disable workflow**.
+
+## Installation sur un serveur (Ubuntu 24.04), en option
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/dGlassS/alpaca-bot/main/deploy/install.sh -o install.sh

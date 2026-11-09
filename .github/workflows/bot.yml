@@ -1,0 +1,68 @@
+name: Bot de trading (Paper)
+
+on:
+  schedule:
+    - cron: "*/30 13-20 * * 1-5"   # pendant la séance de New York (heure UTC)
+    - cron: "15 22 * * 5"          # rapport du vendredi, après la clôture
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "bot ou rapport"
+        type: choice
+        options: [bot, rapport]
+        default: bot
+
+permissions:
+  contents: write
+
+concurrency:
+  group: alpaca-bot
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
+      ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+      BOT_LOG_DIR: jr/logs
+      BOT_REPORT_DIR: jr/reports
+      IS_REPORT: ${{ github.event.schedule == '15 22 * * 5' || inputs.task == 'rapport' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+
+      - name: Récupérer le journal (branche journal)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          URL="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if git ls-remote --exit-code "$URL" journal >/dev/null; then
+            git clone -q --depth 1 -b journal "$URL" jr
+          else
+            git init -q -b journal jr && git -C jr remote add origin "$URL"
+          fi
+
+      - name: Faire tourner le bot (1 heure)
+        if: env.IS_REPORT != 'true'
+        env:
+          BOT_MAX_MINUTES: "60"
+        run: python -m bot.main
+
+      - name: Rapport de la semaine
+        if: env.IS_REPORT == 'true'
+        run: python -m bot.report >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Sauvegarder le journal
+        if: always()
+        run: |
+          cd jr
+          git add -A
+          git -c user.name="alpaca-bot" -c user.email="alpaca-bot@users.noreply.github.com" \
+            commit -qm "journal $(date -u +%F_%H%M)" || exit 0
+          git push -q origin journal
