@@ -38,6 +38,7 @@ class Bot:
         self.journal = Path(s.log_dir) / "journal.jsonl"
         self._flattened_for = None
         self._stopped_logged = False
+        self._seen_open = False
 
     # ---------- journal ----------
     def record(self, event: str, **data):
@@ -99,7 +100,8 @@ class Bot:
         lim, strat = self.s.limits, self.s.strategy
         clock = self.trading.get_clock()
         if not clock.is_open:
-            return 60
+            return -1 if self._seen_open else 60   # -1 : séance terminée, on peut s'arrêter
+        self._seen_open = True
         now = clock.timestamp.astimezone(NY)
         session_open = now.replace(hour=9, minute=30, second=0, microsecond=0)
         close = clock.next_close.astimezone(NY)
@@ -179,6 +181,11 @@ class Bot:
                 wait = self.tick()
             except Exception:
                 log.exception("erreur pendant le tour de boucle")
+                wait = 60
+            if wait < 0:
+                if deadline is not None:
+                    log.info("séance terminée, arrêt du créneau")
+                    return
                 wait = 60
             if deadline is not None:
                 wait = min(wait, max(0, deadline - _time.monotonic()))
