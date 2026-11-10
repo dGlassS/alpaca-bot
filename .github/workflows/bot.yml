@@ -57,7 +57,9 @@ jobs:
         if: env.IS_REPORT != 'true'
         env:
           BOT_MAX_MINUTES: ${{ inputs.minutes || (github.event_name == 'push' && '340') || '60' }}
-        run: python -m bot.main
+        run: |
+          (while sleep 600; do bash deploy/sync_journal.sh; done) &
+          python -m bot.main
 
       - name: Rapport de la semaine
         if: env.IS_REPORT == 'true'
@@ -65,9 +67,4 @@ jobs:
 
       - name: Sauvegarder le journal
         if: always()
-        run: |
-          cd jr
-          git add -A
-          git -c user.name="alpaca-bot" -c user.email="alpaca-bot@users.noreply.github.com" \
-            commit -qm "journal $(date -u +%F_%H%M)" || exit 0
-          git push -q origin journal
+        run: bash deploy/sync_journal.sh
