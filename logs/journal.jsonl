@@ -8,3 +8,4 @@
 {"time": "2026-11-10T15:18:30-05:00", "event": "demarrage", "mode": "paper", "watchlist": ["SPY", "QQQ", "AAPL", "MSFT", "NVDA", "AMD", "TSLA", "META", "AMZN", "GOOGL"]}
 {"time": "2026-11-11T09:38:10-05:00", "event": "demarrage", "mode": "paper", "watchlist": ["SPY", "QQQ", "AAPL", "MSFT", "NVDA", "AMD", "TSLA", "META", "AMZN", "GOOGL"]}
 {"time": "2026-11-11T09:46:26-05:00", "event": "achat", "symbol": "AAPL", "qty": 16, "entry": 354.36, "stop": 351.36, "target": 360.36, "max_loss": 48.0, "reward_risk": 2.0, "order_id": "ff8408d9-2bbc-42d8-8441-e7d6b9f1ab47"}
+{"time": "2026-11-11T10:13:21-05:00", "event": "achat", "symbol": "TSLA", "qty": 13, "entry": 393.1, "stop": 389.51, "target": 400.27, "max_loss": 46.67, "reward_risk": 2.0, "order_id": "f1286bc7-55aa-4051-8882-c3ade7308b7c"}
