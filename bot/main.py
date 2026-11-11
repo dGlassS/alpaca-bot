@@ -40,6 +40,7 @@ class Bot:
         self._stopped_logged = False
         self._seen_open = False
         self._leftovers_checked_for = None
+        self._end_ny = None   # heure de fin du créneau (New York), si on doit tout fermer avant
 
     # ---------- journal ----------
     def record(self, event: str, **data):
@@ -132,6 +133,11 @@ class Bot:
         flatten_at = min(now.replace(hour=lim.flatten_at.hour, minute=lim.flatten_at.minute, second=0,
                                      microsecond=0), close - timedelta(minutes=5))
         entries_until = min(lim.no_entries_after, (close - timedelta(minutes=30)).time())
+        # Créneau GitHub limité dans le temps : on ferme tout AVANT qu'il se termine,
+        # pour ne jamais dépendre d'un créneau suivant (qui peut ne pas démarrer).
+        if self._end_ny is not None:
+            flatten_at = min(flatten_at, self._end_ny - timedelta(minutes=5))
+            entries_until = min(entries_until, (self._end_ny - timedelta(minutes=30)).time())
 
         if self.stop_requested():
             if not self._stopped_logged:
@@ -200,6 +206,8 @@ class Bot:
     def run(self, max_minutes: float = 0):
         """Tourne en boucle. Avec max_minutes > 0, s'arrête après ce temps (GitHub Actions)."""
         deadline = _time.monotonic() + max_minutes * 60 if max_minutes > 0 else None
+        if deadline is not None and os.environ.get("BOT_FLATTEN_BEFORE_END") == "1":
+            self._end_ny = datetime.now(NY) + timedelta(minutes=max_minutes)
         if deadline is not None:
             clock = self.trading.get_clock()
             if not clock.is_open and clock.next_open - clock.timestamp > timedelta(minutes=max_minutes):
