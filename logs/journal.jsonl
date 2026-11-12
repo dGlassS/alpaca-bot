@@ -13,3 +13,4 @@
 {"time": "2026-11-12T11:42:46-05:00", "event": "flatten", "reason": "positions de la veille", "positions": ["AAPL"], "restantes": []}
 {"time": "2026-11-12T11:42:48-05:00", "event": "achat", "symbol": "QQQ", "qty": 8, "entry": 690.16, "stop": 684.04, "target": 702.41, "max_loss": 48.96, "reward_risk": 2.0, "order_id": "e4d29f5b-2b31-4317-91c6-c78a3e037897"}
 {"time": "2026-11-12T11:43:31-05:00", "event": "achat", "symbol": "MSFT", "qty": 9, "entry": 528.4, "stop": 523.19, "target": 538.82, "max_loss": 46.89, "reward_risk": 2.0, "order_id": "c14cc45c-3625-4aaf-9b0c-5de6ea2fe1ff"}
+{"time": "2026-11-12T15:55:47-05:00", "event": "flatten", "reason": "fin de séance", "positions": ["QQQ"], "restantes": []}
