@@ -14,3 +14,6 @@
 {"time": "2026-11-12T11:42:48-05:00", "event": "achat", "symbol": "QQQ", "qty": 8, "entry": 690.16, "stop": 684.04, "target": 702.41, "max_loss": 48.96, "reward_risk": 2.0, "order_id": "e4d29f5b-2b31-4317-91c6-c78a3e037897"}
 {"time": "2026-11-12T11:43:31-05:00", "event": "achat", "symbol": "MSFT", "qty": 9, "entry": 528.4, "stop": 523.19, "target": 538.82, "max_loss": 46.89, "reward_risk": 2.0, "order_id": "c14cc45c-3625-4aaf-9b0c-5de6ea2fe1ff"}
 {"time": "2026-11-12T15:55:47-05:00", "event": "flatten", "reason": "fin de séance", "positions": ["QQQ"], "restantes": []}
+{"time": "2026-11-13T09:56:22-05:00", "event": "demarrage", "mode": "paper", "watchlist": ["SPY", "QQQ", "AAPL", "MSFT", "NVDA", "AMD", "TSLA", "META", "AMZN", "GOOGL"]}
+{"time": "2026-11-13T09:56:23-05:00", "event": "achat", "symbol": "MSFT", "qty": 10, "entry": 522.3, "stop": 517.34, "target": 532.22, "max_loss": 49.6, "reward_risk": 2.0, "order_id": "efd35ea9-aee1-48c5-9851-612cca3f1b0b"}
+{"time": "2026-11-13T09:56:23-05:00", "event": "achat", "symbol": "META", "qty": 10, "entry": 635.12, "stop": 630.18, "target": 644.99, "max_loss": 49.4, "reward_risk": 2.0, "order_id": "234ee952-49d6-4479-aa89-6ec1a14b44b3"}
