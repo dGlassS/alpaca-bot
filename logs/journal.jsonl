@@ -17,3 +17,4 @@
 {"time": "2026-11-13T09:56:22-05:00", "event": "demarrage", "mode": "paper", "watchlist": ["SPY", "QQQ", "AAPL", "MSFT", "NVDA", "AMD", "TSLA", "META", "AMZN", "GOOGL"]}
 {"time": "2026-11-13T09:56:23-05:00", "event": "achat", "symbol": "MSFT", "qty": 10, "entry": 522.3, "stop": 517.34, "target": 532.22, "max_loss": 49.6, "reward_risk": 2.0, "order_id": "efd35ea9-aee1-48c5-9851-612cca3f1b0b"}
 {"time": "2026-11-13T09:56:23-05:00", "event": "achat", "symbol": "META", "qty": 10, "entry": 635.12, "stop": 630.18, "target": 644.99, "max_loss": 49.4, "reward_risk": 2.0, "order_id": "234ee952-49d6-4479-aa89-6ec1a14b44b3"}
+{"time": "2026-11-13T15:31:40-05:00", "event": "flatten", "reason": "fin de séance", "positions": ["MSFT"], "restantes": []}
