@@ -84,3 +84,20 @@ def test_report_pairs_entries_and_exits():
     assert [(t.symbol, t.pnl, t.exit_kind) for t in trades] == [("AAPL", 100.0, "objectif"), ("TSLA", -40.0, "stop")]
     s = summarize(trades)
     assert s["pnl_total"] == 60.0 and s["taux_reussite"] == 50.0
+
+
+def test_report_overnight_trade_is_closed_next_day():
+    from bot.report import Fill, build_trades
+    d1 = datetime(2026, 11, 9, 10, 0, tzinfo=NY)
+    d2 = datetime(2026, 11, 10, 9, 31, tzinfo=NY)
+    fills = [
+        Fill("AAPL", "buy", 10, 100.0, d1, "entree"),
+        Fill("AAPL", "buy", 7, 100.0, d1, "entree"),
+        Fill("AAPL", "sell", 17, 101.0, d2, "fermeture"),
+        Fill("AAPL", "buy", 5, 102.0, d2 + timedelta(minutes=20), "entree"),
+    ]
+    trades = build_trades(fills)
+    assert [(t.day, t.qty, t.pnl, t.exit_kind) for t in trades] == [
+        ("2026-11-09", 17, 17.0, "fermeture (lendemain)"),
+        ("2026-11-10", 5, None, "encore ouvert"),
+    ]

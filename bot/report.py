@@ -35,27 +35,44 @@ class Trade:
 
 
 def build_trades(fills: List[Fill]) -> List[Trade]:
-    """Regroupe les exécutions par action et par jour : une entrée du bot = un trade."""
-    groups = defaultdict(list)
-    for f in fills:
-        groups[(f.symbol, f.time.date().isoformat())].append(f)
+    """Une entrée du bot = un trade. Les ventes qui suivent (même le lendemain) le referment."""
+    by_symbol = defaultdict(list)
+    for f in sorted(fills, key=lambda f: f.time):
+        by_symbol[f.symbol].append(f)
     trades = []
-    for (sym, day), fs in sorted(groups.items(), key=lambda kv: kv[0][1]):
-        buys = [f for f in fs if f.side == "buy" and f.kind == "entree"]
-        if not buys:
-            continue
-        sells = [f for f in fs if f.side == "sell"]
-        qty = sum(f.qty for f in buys)
-        entry = sum(f.qty * f.price for f in buys) / qty
-        if not sells:
-            trades.append(Trade(sym, day, qty, round(entry, 2), None, None, "encore ouvert"))
-            continue
-        sold = sum(f.qty for f in sells)
-        exit_ = sum(f.qty * f.price for f in sells) / sold
-        last = max(sells, key=lambda f: f.time)
-        pnl = sum(f.qty * f.price for f in sells) - entry * sold
-        trades.append(Trade(sym, day, qty, round(entry, 2), round(exit_, 2), round(pnl, 2), last.kind))
-    return trades
+    for sym, fs in by_symbol.items():
+        buys, sells = [], []
+
+        def close_trade():
+            qty = sum(b.qty for b in buys)
+            entry = sum(b.qty * b.price for b in buys) / qty
+            day = buys[0].time.date().isoformat()
+            if not sells:
+                trades.append(Trade(sym, day, qty, round(entry, 2), None, None, "encore ouvert"))
+                return
+            sold = sum(s.qty for s in sells)
+            exit_ = sum(s.qty * s.price for s in sells) / sold
+            last = sells[-1]
+            kind = last.kind
+            if kind == "fermeture" and last.time.date() != buys[0].time.date():
+                kind = "fermeture (lendemain)"
+            pnl = sum(s.qty * s.price for s in sells) - entry * sold
+            trades.append(Trade(sym, day, qty, round(entry, 2), round(exit_, 2), round(pnl, 2), kind))
+
+        for f in fs:
+            if f.side == "buy" and f.kind == "entree":
+                if buys and sells:          # un nouveau trade commence : on range le précédent
+                    close_trade()
+                    buys, sells = [], []
+                buys.append(f)
+            elif f.side == "sell" and buys:
+                sells.append(f)
+                if sum(s.qty for s in sells) >= sum(b.qty for b in buys):
+                    close_trade()
+                    buys, sells = [], []
+        if buys:
+            close_trade()
+    return sorted(trades, key=lambda t: t.day)
 
 
 def summarize(trades: List[Trade]) -> dict:
