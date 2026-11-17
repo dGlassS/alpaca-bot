@@ -40,6 +40,7 @@ class Bot:
         self._stopped_logged = False
         self._seen_open = False
         self._leftovers_checked_for = None
+        self._errors_logged = set()
         self._end_ny = None   # heure de fin du créneau (New York), si on doit tout fermer avant
 
     # ---------- journal ----------
@@ -217,8 +218,13 @@ class Bot:
         while deadline is None or _time.monotonic() < deadline:
             try:
                 wait = self.tick()
-            except Exception:
+            except Exception as e:
                 log.exception("erreur pendant le tour de boucle")
+                # Visible dans le journal (une fois par type d'erreur), pas seulement dans les logs GitHub.
+                key = f"{type(e).__name__}: {e}"[:300]
+                if key not in self._errors_logged:
+                    self._errors_logged.add(key)
+                    self.record("erreur", detail=key)
                 wait = 60
             if wait < 0:
                 if deadline is not None:
