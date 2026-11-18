@@ -23,3 +23,4 @@
 {"time": "2026-11-17T09:46:08-05:00", "event": "achat", "symbol": "AAPL", "qty": 28, "entry": 353.76, "stop": 352.7, "target": 355.88, "max_loss": 29.68, "reward_risk": 2.0, "order_id": "f99a9eea-b7dd-4a3c-ad2f-01ec21668928"}
 {"time": "2026-11-17T09:47:10-05:00", "event": "achat", "symbol": "TSLA", "qty": 25, "entry": 382.66, "stop": 380.72, "target": 386.54, "max_loss": 48.5, "reward_risk": 2.0, "order_id": "cde31bc6-c168-44b6-a0a5-e3caa7fbede3"}
 {"time": "2026-11-18T09:38:35-05:00", "event": "demarrage", "mode": "paper", "watchlist": ["SPY", "QQQ", "AAPL", "MSFT", "NVDA", "AMD", "TSLA", "META", "AMZN", "GOOGL"]}
+{"time": "2026-11-18T09:57:18-05:00", "event": "achat", "symbol": "AAPL", "qty": 24, "entry": 355.97, "stop": 353.9, "target": 360.11, "max_loss": 49.68, "reward_risk": 2.0, "order_id": "a79e5f05-c9e9-428d-946a-4dc5523bca16"}
