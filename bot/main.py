@@ -42,6 +42,33 @@ class Bot:
         self._leftovers_checked_for = None
         self._errors_logged = set()
         self._end_ny = None   # heure de fin du créneau (New York), si on doit tout fermer avant
+        self._positions = {}  # symbole -> (quantité, prix moyen d'achat), vu au tour précédent
+
+    def track_closes(self, session_open: datetime):
+        """Note dans le journal chaque position qui vient de disparaître (objectif, stop ou fermeture)."""
+        now_pos = {p.symbol: (float(p.qty), float(p.avg_entry_price))
+                   for p in self.trading.get_all_positions()}
+        gone = [s for s in self._positions if s not in now_pos]
+        if gone:
+            orders = self.trading.get_orders(GetOrdersRequest(
+                status=QueryOrderStatus.CLOSED, after=session_open, limit=500, nested=True))
+            sells = []
+            for o in orders:
+                for x in [o, *(o.legs or [])]:
+                    if x.side == OrderSide.SELL and x.filled_at and float(x.filled_qty or 0) > 0:
+                        sells.append(x)
+            for sym in gone:
+                qty, entry = self._positions[sym]
+                mine = [x for x in sells if x.symbol == sym]
+                last = max(mine, key=lambda x: x.filled_at) if mine else None
+                if last is None:
+                    self.record("position_fermee", symbol=sym, qty=qty, entree=round(entry, 2))
+                    continue
+                price = float(last.filled_avg_price)
+                kind = {"limit": "objectif", "stop": "stop"}.get(last.order_type.value, "fermeture")
+                self.record("position_fermee", symbol=sym, qty=qty, entree=round(entry, 2),
+                            sortie=round(price, 2), resultat=round((price - entry) * qty, 2), par=kind)
+        self._positions = now_pos
 
     # ---------- journal ----------
     def record(self, event: str, **data):
@@ -139,6 +166,11 @@ class Bot:
         if self._end_ny is not None:
             flatten_at = min(flatten_at, self._end_ny - timedelta(minutes=5))
             entries_until = min(entries_until, (self._end_ny - timedelta(minutes=30)).time())
+
+        try:
+            self.track_closes(session_open)
+        except Exception:
+            log.exception("suivi des fermetures impossible")
 
         if self.stop_requested():
             if not self._stopped_logged:
