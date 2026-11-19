@@ -26,3 +26,4 @@
 {"time": "2026-11-18T09:57:18-05:00", "event": "achat", "symbol": "AAPL", "qty": 24, "entry": 355.97, "stop": 353.9, "target": 360.11, "max_loss": 49.68, "reward_risk": 2.0, "order_id": "a79e5f05-c9e9-428d-946a-4dc5523bca16"}
 {"time": "2026-11-18T10:00:19-05:00", "event": "achat", "symbol": "AMZN", "qty": 19, "entry": 263.88, "stop": 261.36, "target": 268.92, "max_loss": 47.88, "reward_risk": 2.0, "order_id": "74015984-22c4-49cb-9565-dfbfda4dbfdb"}
 {"time": "2026-11-18T15:13:44-05:00", "event": "flatten", "reason": "fin de séance", "positions": ["AMZN"], "restantes": []}
+{"time": "2026-11-19T09:38:07-05:00", "event": "demarrage", "mode": "paper", "watchlist": ["SPY", "QQQ", "AAPL", "MSFT", "NVDA", "AMD", "TSLA", "META", "AMZN", "GOOGL"]}
