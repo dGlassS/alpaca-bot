@@ -30,3 +30,4 @@
 {"time": "2026-11-19T09:50:16-05:00", "event": "achat", "symbol": "MSFT", "qty": 13, "entry": 525.51, "stop": 521.79, "target": 532.95, "max_loss": 48.36, "reward_risk": 2.0, "order_id": "aa70434c-a3e5-42f3-b0de-1c1aa88f6b7e"}
 {"time": "2026-11-19T09:50:16-05:00", "event": "achat", "symbol": "AMD", "qty": 5, "entry": 554.46, "stop": 544.54, "target": 574.3, "max_loss": 49.6, "reward_risk": 2.0, "order_id": "1ec24f99-e3aa-4269-810a-f88d390c839c"}
 {"time": "2026-11-19T09:57:21-05:00", "event": "position_fermee", "symbol": "AMD", "qty": 5.0, "entree": 553.62, "sortie": 544.3, "resultat": -46.62, "par": "stop"}
+{"time": "2026-11-19T10:12:13-05:00", "event": "position_fermee", "symbol": "MSFT", "qty": 13.0, "entree": 525.75, "sortie": 521.56, "resultat": -54.53, "par": "stop"}
