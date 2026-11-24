@@ -41,3 +41,6 @@
 {"time": "2026-11-23T10:21:03-05:00", "event": "achat", "symbol": "AAPL", "qty": 22, "entry": 349.86, "stop": 347.61, "target": 354.36, "max_loss": 49.5, "reward_risk": 2.0, "order_id": "b97cd362-ae89-4a1d-ba90-4c70fb3e4deb"}
 {"time": "2026-11-23T11:40:37-05:00", "event": "position_fermee", "symbol": "AAPL", "qty": 22.0, "entree": 349.68, "sortie": 347.61, "resultat": -45.56, "par": "stop"}
 {"time": "2026-11-23T11:42:38-05:00", "event": "position_fermee", "symbol": "SPY", "qty": 7.0, "entree": 725.54, "sortie": 719.12, "resultat": -44.96, "par": "stop"}
+{"time": "2026-11-24T09:38:03-05:00", "event": "demarrage", "mode": "paper", "watchlist": ["SPY", "QQQ", "AAPL", "MSFT", "NVDA", "AMD", "TSLA", "META", "AMZN", "GOOGL"]}
+{"time": "2026-11-24T09:46:10-05:00", "event": "achat", "symbol": "SPY", "qty": 13, "entry": 718.79, "stop": 714.97, "target": 726.43, "max_loss": 49.66, "reward_risk": 2.0, "order_id": "efe0a70b-18a9-4443-b912-6e7115d6e7ad"}
+{"time": "2026-11-24T09:46:10-05:00", "event": "achat", "symbol": "QQQ", "qty": 15, "entry": 641.57, "stop": 638.54, "target": 647.62, "max_loss": 45.45, "reward_risk": 2.0, "order_id": "860f40a8-345d-4ecb-a0e4-6c9dcf513790"}
