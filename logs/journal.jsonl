@@ -47,3 +47,5 @@
 {"time": "2026-11-24T10:07:18-05:00", "event": "position_fermee", "symbol": "QQQ", "qty": 15.0, "entree": 641.74, "sortie": 638.56, "resultat": -47.68, "par": "stop"}
 {"time": "2026-11-24T10:28:04-05:00", "event": "position_fermee", "symbol": "SPY", "qty": 13.0, "entree": 718.63, "sortie": 714.91, "resultat": -48.39, "par": "stop"}
 {"time": "2026-11-25T09:38:09-05:00", "event": "demarrage", "mode": "paper", "watchlist": ["SPY", "QQQ", "AAPL", "MSFT", "NVDA", "AMD", "TSLA", "META", "AMZN", "GOOGL"]}
+{"time": "2026-11-25T09:54:10-05:00", "event": "achat", "symbol": "GOOGL", "qty": 33, "entry": 265.75, "stop": 264.24, "target": 268.78, "max_loss": 49.83, "reward_risk": 2.01, "order_id": "3224531e-969c-4a50-ad91-91f634691a30"}
+{"time": "2026-11-25T09:56:14-05:00", "event": "achat", "symbol": "META", "qty": 6, "entry": 580.9, "stop": 573.5, "target": 595.7, "max_loss": 44.4, "reward_risk": 2.0, "order_id": "b7c36648-85f6-4629-a3a9-47845ca16ad7"}
